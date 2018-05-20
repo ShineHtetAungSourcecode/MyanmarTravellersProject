@@ -1,0 +1,125 @@
+﻿@model MyanmarTravellers.Models.Cours
+@using MyanmarTravellers.Models
+@{
+    ViewBag.Title = "Details";
+}
+
+<h3>Details</h3>
+
+<div>
+    <h4>Course</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.departure_time)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.departure_time)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.created_at)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.created_at)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.updated_at)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.updated_at)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Bus.plate_no)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Bus.plate_no)
+        </dd>
+
+        <dt>
+            From Location
+        </dt>
+
+        <dd>
+            @{
+                MMTravellersEntities db = new MMTravellersEntities();
+                var fromlocation = db.Locations.Find(Model.from_id);
+            }
+            @fromlocation.name
+        </dd>
+
+        <dt>
+            To Location
+        </dt>
+
+        <dd>
+            @{
+                var tolocation = db.Locations.Find(Model.to_id);
+            }
+            @tolocation.name
+        </dd>
+
+    </dl>
+</div>
+
+@Html.ValidationMessage("")
+
+<form action="/Sales/CheckOut" method="GET">
+    <input type="hidden" name="course_id" value="@Model.id" />
+    <div class="bus">
+        <div class="cockpit">
+            <h3>Front</h3>
+        </div>
+        <ol>
+            @foreach (var row in ViewBag.Rows)
+            {
+                <li>
+                    <ol class="seats">
+                        @foreach (var ticket in row)
+                        {
+                            <li class="seat">
+
+                                @if (null != ticket.sale_id)
+                                {
+                                    <input type="checkbox" id="@ticket.id" disabled />
+                                    <label for="@ticket.id">@ticket.Seat.seat_no</label>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" name="ticket_ids" id="@ticket.id" value="@ticket.id" />
+                                    <label for="@ticket.id">@ticket.Seat.seat_no</label>
+                                }
+                            </li>
+                        }
+                    </ol>
+                </li>
+            }
+        </ol>
+        <div class="engine">
+            <h3>Back</h3>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> | Checkout</button>
+
+</form>
+
+
+@section styles
+{
+    <link href="~/Content/course-detail.css" rel="stylesheet" />
+}

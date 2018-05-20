@@ -1,0 +1,106 @@
+﻿@model MyanmarTravellers.Models.Sale
+@using MyanmarTravellers.Models
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Sale Details</h2>
+
+<button class="btn btn-success" onclick="savePDF()">Save as PDF</button>
+
+<div class="container-fluid" id="print_section">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">@Html.DisplayNameFor(model => model.customer_name)</div>
+                    <div class="col-md-6">@Html.DisplayFor(model => model.customer_name)</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">@Html.DisplayNameFor(model => model.nrc)</div>
+                    <div class="col-md-6">@Html.DisplayFor(model => model.nrc)</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">@Html.DisplayNameFor(model => model.phone)</div>
+                    <div class="col-md-6">@Html.DisplayFor(model => model.phone)</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">@Html.DisplayNameFor(model => model.total)</div>
+                    <div class="col-md-6">@Html.DisplayFor(model => model.total)</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">@Html.DisplayNameFor(model => model.created_at)</div>
+                    <div class="col-md-6">@Html.DisplayFor(model => model.created_at)</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">@Html.DisplayNameFor(model => model.updated_at)</div>
+                    <div class="col-md-6">@Html.DisplayFor(model => model.updated_at)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <img src='@Url.Action("GenerateQR", new { sale_id = Model.id })' alt="" style="width: 150px">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Seat No.</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Car No.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int i = 1;}
+                    @foreach(var ticket in Model.Tickets) {
+                    <tr>
+                        <th>@i</th>
+                        <th>@ticket.Seat.seat_no</th>
+                        <th>
+                            @{
+                                MMTravellersEntities db = new MMTravellersEntities();
+                                var fromlocation = db.Locations.Find(ticket.Cours.from_id);
+                            }
+                            @fromlocation.name
+                        </th>
+                        <td>
+                            @{
+                                var tolocation = db.Locations.Find(ticket.Cours.to_id);
+                            }
+                            @tolocation.name
+                        </td>
+                        <th>@ticket.Cours.Bus.plate_no</th>
+                    </tr>
+                        i++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/print");
+    <script>
+        function savePDF() {
+            html2canvas(document.querySelector("#print_section")).then(canvas => {
+
+                var imgData = canvas.toDataURL("image/png", 1.0);
+                var pdf = new jsPDF({
+                    orientation: 'landscape'
+                });
+                pdf.addImage(imgData, 'PNG', 10, 10, 280, 100);
+                pdf.save("download.pdf");
+            });
+        }
+    </script>
+}

@@ -1,0 +1,76 @@
+﻿@model IEnumerable<MyanmarTravellers.Models.Cours>
+@using MyanmarTravellers.Models
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "CreateStep1")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.departure_time)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.created_at)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.updated_at)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Bus.plate_no)
+        </th>
+        <th>
+            From Location
+        </th>
+        <th>
+            To Location
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.departure_time)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.created_at)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.updated_at)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Bus.plate_no)
+        </td>
+        <td>
+            @*@Html.DisplayFor(modelItem => item.FromLocation.name)*@
+            @{ 
+                MMTravellersEntities db = new MMTravellersEntities();
+                var fromlocation = db.Locations.Find(item.from_id);
+            }
+            @fromlocation.name
+        </td>
+        <td>
+            @{
+                var tolocation = db.Locations.Find(item.to_id);
+            }
+            @tolocation.name
+        </td>
+        <td>
+            @Html.ActionLink("Details", "Details", new { id=item.id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.id })
+        </td>
+    </tr>
+}
+
+</table>
